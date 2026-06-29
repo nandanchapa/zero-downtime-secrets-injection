@@ -10,32 +10,36 @@ This repository showcases the implementation of a parallel sandbox infrastructur
 
 The pipeline eliminates static, hardcoded credentials stored in flat configuration files by dynamically querying the PAM vault during the application initialization phase.
 ```mermaid
-graph TD
----
-config:
-  theme: neo
----
-flowchart TB
- subgraph Sandbox_Pipeline["Validated Sandbox Environment"]
-        sysd3001["systemd Daemon: app-sandbox.service"]
-        wrapper3001["Bash Wrapper: scripts/bootstrap-injector.sh"]
-        app3001["Application Core: Port 3001"]
-  end
- subgraph Prod_Pipeline["Production Deployment Environment"]
-        sysd3000["systemd Daemon: application-server.service"]
-        wrapper3000["Bash Wrapper: scripts/production-injector.sh"]
-        app3000["Application Core: Port 3000"]
-  end
- subgraph Host["Enterprise Linux Host"]
-        Sandbox_Pipeline
-        py["Python Vault Client: vault_client.py"]
-        filter["Stream Text Filter: tr -d quotes"]
-        db[("Target Database: Port 5432")]
-        Prod_Pipeline
-  end
- subgraph Network["Secure Corporate Core"]
-        pam["PAM API Endpoint"]
-  end
+flowchart TD
+    %% Server Subgraph Boundary
+    subgraph Host [Enterprise Linux Host]
+        
+        %% Sandbox Context
+        subgraph Sandbox_Pipeline [Validated Sandbox Environment]
+            sysd3001[systemd Daemon: app-sandbox.service]
+            wrapper3001[Bash Wrapper: scripts/bootstrap-injector.sh]
+            app3001[Application Core: Port 3001]
+        end
+
+        %% Central Orchestration & Target
+        py[Python Vault Client: vault_client.py]
+        filter[Stream Text Filter: tr -d quotes]
+        db[(Target Database: Port 5432)]
+
+        %% Production Context
+        subgraph Prod_Pipeline [Production Deployment Environment]
+            sysd3000[systemd Daemon: application-server.service]
+            wrapper3000[Bash Wrapper: scripts/production-injector.sh]
+            app3000[Application Core: Port 3000]
+        end
+
+    end
+
+    subgraph Network [Secure Corporate Core]
+        pam[PAM API Endpoint]
+    end
+
+    %% Sandbox Connections
     sysd3001 --> wrapper3001
     wrapper3001 --> py
     py ==> pam
@@ -43,7 +47,10 @@ flowchart TB
     py --> filter
     filter --> app3001
     app3001 ==> db
-    sysd3000 -. systemctl edit override .-> wrapper3000
-    wrapper3000 -. Invokes .-> py
+
+    %% Production Migration Path
+    sysd3000 -.-> wrapper3000
+    wrapper3000 -.-> py
     filter -.-> app3000
     app3000 -.-> db
+```
