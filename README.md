@@ -80,8 +80,7 @@ This wrapper script is invoked directly by systemd to intercept the application 
 To migrate this configuration seamlessly to the production instance (port 3000) without modifying vendor-installed base service files, systemd Drop-in Overrides are implemented. This prevents package upgrades from wiping out the automation hooks.
 
 ## 📊 Core Competencies Demonstrated
-Advanced Automation & Systems Scripting: Mastery of mixing complex Bash scripting paradigms with advanced object extraction architectures in Python.
 
-DevSecOps & Secrets Management: Hands-on experience building custom API integrations with enterprise access management utilities to eliminate hardcoded secrets.
-
-Linux Systems Internals: Practical understanding of how systemd coordinates background daemons, environment variable precedence, process namespace allocation (exec), and system trust anchors.
+* **Advanced Automation & Systems Scripting:** Mastery of mixing complex Bash scripting paradigms with advanced object extraction architectures in Python.
+* **DevSecOps & Secrets Management:** Hands-on experience building custom API integrations with enterprise access management utilities to eliminate hardcoded secrets.
+* **Linux Systems Internals:** Practical understanding of how systemd coordinates background daemons, environment variable precedence, process namespace allocation (`exec`), and system trust anchors.
